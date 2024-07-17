@@ -650,7 +650,11 @@ export const allCandidatesWithAnyFields = async (): Promise<Candidate[]> => {
 };
 
 // Retrieve all candidates that have a stash and slotId set
-export const allCandidates = async (
+export const allCandidates = async (): Promise<Candidate[]> => {
+  return CandidateModel.find({ stash: /.*/ }).lean<Candidate[]>();
+};
+
+export const getAllCandidatesWithPagination = async (
   stash?: string,
   page = 1,
   limit = 0,

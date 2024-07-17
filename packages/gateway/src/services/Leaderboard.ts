@@ -65,7 +65,7 @@ export const getCandidatesWithRewards = async (
   page?: string,
   limit?: string,
 ): Promise<any> => {
-  const allCandidates = await queries.allCandidates(
+  const allCandidates = await queries.getAllCandidatesWithPagination(
     stash as string,
     Number(page),
     Number(limit),
