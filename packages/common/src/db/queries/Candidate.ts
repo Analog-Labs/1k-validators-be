@@ -658,19 +658,36 @@ export const getAllCandidatesWithPagination = async (
   stash?: string,
   page = 1,
   limit = 0,
-): Promise<Candidate[]> => {
+): Promise<{ candidates: Candidate[]; totalCount: number }> => {
   const skip = (page - 1) * limit;
 
-  const query = CandidateModel.find({
-    stash: stash || /.*/,
-  }).skip(skip);
+  const matchStage = {
+    $match: {
+      stash: stash || /.*/,
+    },
+  };
+
+  const facetStage: any = {
+    $facet: {
+      candidates: [{ $skip: skip }],
+      totalCount: [{ $count: "count" }],
+    },
+  };
 
   // Only apply limit if it is greater than 0
   if (limit > 0) {
-    query.limit(limit);
+    facetStage.$facet.candidates.push({ $limit: limit });
   }
 
-  return query.lean<Candidate[]>().exec();
+  const result = await CandidateModel.aggregate([
+    matchStage,
+    facetStage,
+  ]).exec();
+
+  const candidates = result[0].candidates;
+  const totalCount = result[0].totalCount[0]?.count || 0;
+
+  return { candidates, totalCount };
 };
 
 export const getCandidateSearchSuggestion = async (
