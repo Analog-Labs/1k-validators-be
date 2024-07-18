@@ -71,14 +71,18 @@ export const getCandidatesWithRewards = async (
     Number(limit),
   );
   const candidatesWithAdditionalFields = await Promise.all(
-    allCandidates.map(async (candidate) => {
+    allCandidates.candidates.map(async (candidate) => {
       return await getCandidateData(candidate);
     }),
   );
 
-  return candidatesWithAdditionalFields.sort((a, b) => {
+  const sortedCandidates = candidatesWithAdditionalFields.sort((a, b) => {
     return b.total - a.total;
   });
+
+  return limit
+    ? { candidates: sortedCandidates, totalCount: allCandidates.totalCount }
+    : sortedCandidates;
 };
 
 export const getCandidatesSearchSuggestion = async (
