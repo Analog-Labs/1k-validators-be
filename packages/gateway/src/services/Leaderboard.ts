@@ -67,8 +67,8 @@ export const getCandidatesWithRewards = async (
 ): Promise<any> => {
   const allCandidates = await queries.getAllCandidatesWithPagination(
     stash as string,
-    Number(page),
-    Number(limit),
+    Number(page) || 1,
+    Number(limit) || 0,
   );
   const candidatesWithAdditionalFields = await Promise.all(
     allCandidates.candidates.map(async (candidate) => {
@@ -80,7 +80,7 @@ export const getCandidatesWithRewards = async (
     return b.total - a.total;
   });
 
-  return limit
+  return Number(limit)
     ? { candidates: sortedCandidates, totalCount: allCandidates.totalCount }
     : sortedCandidates;
 };
