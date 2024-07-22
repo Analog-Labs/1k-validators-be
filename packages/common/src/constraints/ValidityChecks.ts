@@ -112,7 +112,7 @@ const _checkLatestClientVersion = async (
     return true;
   }
 
-  if (!latestRelease || !latestRelease.name || !latestRelease.publishedAt) {
+  if (!latestRelease || !latestRelease.name) {
     logger.error(
       `Latest release isn't properly set, defaulting the validity to true... `,
     );
